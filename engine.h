@@ -1,3 +1,10 @@
+/////////////////////////////////////////////////////////////////////////////////////////////
+//
+// This code represents the simulation engine. Some of this code is taken and/or adapated from
+// a simulation written by Dr. Richard Fujimoto at the Georgia Institute of Technology.
+//
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 // Simulation Engine Interface
 
 // Schedule an event with timestamp ts, event parameters *data, and callback function cb
