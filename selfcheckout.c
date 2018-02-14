@@ -26,14 +26,12 @@ int NumberOfEvents=0;           // number of events executed
 
 // Simulation constants; all times in minutes
 // A = mean interarrival time (drawn from exponential distribution)
-// K = time using runway when landing
 // C = time for each item to be scanned, averaged to include the payment processing
-#define A   2.0
-#define K   0.0
+#define A   4.0
 #define C   0.33
 
 // Number of customers to be simulated (used to determine length of simulation run)
-#define NARRIVALS   20
+#define NARRIVALS   10
 
 // Flag set to 1 to print debugging statements (event trace), 0 otherwise
 #define DB  1
@@ -162,15 +160,11 @@ void Checkout (struct EventData *e)
     InTheCheckout--;
 
     // schedule checkout event
-    // if ((d=malloc (sizeof(struct EventData))) == NULL) {fprintf(stderr, "malloc error\n"); exit(1);}
-    // d->EventType = CHECKOUT;
-    // ts = CurrentTime();
-    // Schedule (ts, d, (void *) Checkout);
-
     if (InTheCheckout>0) {
         //  schedule checkout event for the next customer
         if ((d=malloc (sizeof(struct EventData))) == NULL) {fprintf(stderr, "malloc error\n"); exit(1);}
         d->EventType = CHECKOUT;
+        printf("Num items times time: %f\n", CalcNumOfItems());
         ts = CurrentTime() + C * CalcNumOfItems();
         Schedule (ts, d, (void *) Checkout);
     }
