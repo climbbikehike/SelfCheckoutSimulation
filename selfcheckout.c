@@ -1,9 +1,9 @@
-/////////////////////////////////////////////////////////////////////////////////////////////
-//
-// This code represents the simulation. Some of this code is taken and/or adapated from
-// a simulation written by Dr. Richard Fujimoto at the Georgia Institute of Technology.
-//
-/////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                    //
+// This code represents the self checkout simulation. Some of this code is taken and/or adapated from //
+// a simulation written by Dr. Richard Fujimoto at the Georgia Institute of Technology.               //
+//                                                                                                    //
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 #include <stdio.h>
@@ -27,7 +27,7 @@ int NumberOfEvents=0;           // number of events executed
 // Simulation constants; all times in minutes
 // A = mean interarrival time (drawn from exponential distribution)
 // C = time for each item to be scanned, averaged to include the payment processing
-#define A   4.0
+#define A   3.0
 #define C   0.33
 
 // Number of customers to be simulated (used to determine length of simulation run)
@@ -164,7 +164,6 @@ void Checkout (struct EventData *e)
         //  schedule checkout event for the next customer
         if ((d=malloc (sizeof(struct EventData))) == NULL) {fprintf(stderr, "malloc error\n"); exit(1);}
         d->EventType = CHECKOUT;
-        printf("Num items times time: %f\n", CalcNumOfItems());
         ts = CurrentTime() + C * CalcNumOfItems();
         Schedule (ts, d, (void *) Checkout);
     }
@@ -174,7 +173,7 @@ void Checkout (struct EventData *e)
     }
 
     LastEventTime = CurrentTime();      // time of last event processed
-    free (e);                           // event parameters
+    free (e);                           // free storage for event parameters
 }
 
 int main (void)
