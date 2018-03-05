@@ -44,6 +44,8 @@ int ArrivalCount=0;  // number of arrivals simulated; used for termination
 // State variables used for statistics
 double  TotalWaitingTime = 0.0; // total time waiting to checkout
 double  LastEventTime = 0.0;    // time of last event processed; used to compute TotalWaitingTime
+double TotalSales = 0.0;        // total sales
+double TotalLosses = 0.0;       // total losses 
 
 
 /////////////////////////////////
@@ -71,7 +73,8 @@ void Checkout (struct EventData *e);    // customer checkout event
 
 // prototypes for other procedures
 double RandExp(double M);           // random variable, exponential distribution
-double CalcNumOfItems(void);    // random variable [0,20]
+double CalcNumOfItems(void);    	// random variable [0,20]
+double CalcTransactionTotal(void) 	// random dollar amount between [15, 45]
 
 //////////////////////////////////
 //    Random Number Generator   //
@@ -89,6 +92,13 @@ double CalcNumOfItems(void) {
     double N;              // number of items a customer has
     N = rand() % 20 + 1;   // random integer between 1 and 20
     return N; 
+}
+
+double CalcTransactionTotal(void) {
+	double TOTAL;
+	//Calc a random F.P. value between 0 and 1 and add that to a random number between 15 and 45.
+	TOTAL = ((double) rand() / (RAND_MAX + 1.0)) + (rand() % 45 + 15);
+	return TOTAL;
 }
 
 
