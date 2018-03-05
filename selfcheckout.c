@@ -31,21 +31,23 @@ int NumberOfEvents=0;           // number of events executed
 #define C   0.33
 
 // Number of customers to be simulated (used to determine length of simulation run)
-#define NARRIVALS   10
+#define NARRIVALS  50
 
 // Flag set to 1 to print debugging statements (event trace), 0 otherwise
-#define DB  1
+#define DB  0
 
 // State Variables of Simulation
 int InTheCheckout=0; // number of customers waiting to use the checkout kiosk, or using it
 int KioskFree=1;     // boolean: 1 if kiosk is free, 0 otherwise
 int ArrivalCount=0;  // number of arrivals simulated; used for termination
+int CustomerCount=1; // counter that determines when losses occur, every 3rd customer checking out
 
 // State variables used for statistics
 double  TotalWaitingTime = 0.0; // total time waiting to checkout
 double  LastEventTime = 0.0;    // time of last event processed; used to compute TotalWaitingTime
 double TotalSales = 0.0;        // total sales
-double TotalLosses = 0.0;       // total losses 
+double TotalLosses = 0.0;       // total losses
+double CurrentSaleAmnt = 0.0;   // the cost of the current customer's transaction 
 
 
 /////////////////////////////////
@@ -74,7 +76,7 @@ void Checkout (struct EventData *e);    // customer checkout event
 // prototypes for other procedures
 double RandExp(double M);           // random variable, exponential distribution
 double CalcNumOfItems(void);    	// random variable [0,20]
-double CalcTransactionTotal(void) 	// random dollar amount between [15, 45]
+double CalcTransactionTotal(void); 	// random dollar amount between [15, 45]
 
 //////////////////////////////////
 //    Random Number Generator   //
@@ -97,8 +99,16 @@ double CalcNumOfItems(void) {
 double CalcTransactionTotal(void) {
 	double TOTAL;
 	//Calc a random F.P. value between 0 and 1 and add that to a random number between 15 and 45.
-	TOTAL = ((double) rand() / (RAND_MAX + 1.0)) + (rand() % 45 + 15);
+	TOTAL = ((double) rand() / (RAND_MAX + 1.0)) + (rand() % 30 + 15);
 	return TOTAL;
+}
+
+float CalcLossPercentage(void) {
+	float loss; 
+	loss = ((float) rand() / (float)(RAND_MAX/0.15) + 0.06);
+
+	printf("\nLoss: %f\n", loss);
+	return loss;
 }
 
 
@@ -165,9 +175,18 @@ void Checkout (struct EventData *e)
         TotalWaitingTime += ((InTheCheckout-1) * (CurrentTime()-LastEventTime));
     }
 
-    // update the event count and number of customers in checkout line
+    // update the event count, number of customers in checkout line, number of customers to visit checkout
     NumberOfEvents++;
     InTheCheckout--;
+    CustomerCount++;
+
+    CurrentSaleAmnt = CalcTransactionTotal();
+    TotalSales = TotalSales + CurrentSaleAmnt;
+    // losses occur every 3rd customer 
+    if (CustomerCount % 3 == 0) {
+    	// represents a random loss between 10% and 50% on that transaction
+    	TotalLosses = TotalLosses + (CurrentSaleAmnt * CalcLossPercentage());
+    }
 
     // schedule checkout event
     if (InTheCheckout>0) {
@@ -191,6 +210,7 @@ int main (void)
     struct EventData *d;
     double ts;
     double Duration;
+    //srand(time(NULL));   //Enable to see different possible outcomes
 
     // initialize event list with the first customer arrival
     if ((d=malloc (sizeof(struct EventData))) == NULL) {fprintf(stderr, "malloc error\n"); exit(1);}
@@ -207,6 +227,9 @@ int main (void)
     printf ("Number of customers = %d\n", NARRIVALS);
     printf ("Total waiting time = %f\n", TotalWaitingTime);
     printf ("Average waiting time = %f\n", TotalWaitingTime / (double) NARRIVALS);
+    printf ("Total sales = %.2f\n", TotalSales);
+    printf("Total losses = %.2f\n", TotalLosses);
+    printf("Percentage lost = %.2f%%\n", ((TotalLosses / TotalSales) * 100));
 
     Duration = (double) (EndTime-StartTime) / (double) CLOCKS_PER_SEC;
     printf ("%d events executed in %f seconds (%f events per second)\n", NumberOfEvents, Duration, (double)NumberOfEvents/Duration);
