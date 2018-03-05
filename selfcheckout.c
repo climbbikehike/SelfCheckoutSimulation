@@ -31,7 +31,7 @@ int NumberOfEvents=0;           // number of events executed
 #define C   0.33
 
 // Number of customers to be simulated (used to determine length of simulation run)
-#define NARRIVALS  50
+#define NARRIVALS  40
 
 // Flag set to 1 to print debugging statements (event trace), 0 otherwise
 #define DB  0
@@ -43,8 +43,8 @@ int ArrivalCount=0;  // number of arrivals simulated; used for termination
 int CustomerCount=1; // counter that determines when losses occur, every 3rd customer checking out
 
 // State variables used for statistics
-double  TotalWaitingTime = 0.0; // total time waiting to checkout
-double  LastEventTime = 0.0;    // time of last event processed; used to compute TotalWaitingTime
+double TotalWaitingTime = 0.0; // total time waiting to checkout
+double LastEventTime = 0.0;    // time of last event processed; used to compute TotalWaitingTime
 double TotalSales = 0.0;        // total sales
 double TotalLosses = 0.0;       // total losses
 double CurrentSaleAmnt = 0.0;   // the cost of the current customer's transaction 
@@ -97,14 +97,15 @@ double CalcNumOfItems(void) {
 }
 
 double CalcTransactionTotal(void) {
-	double TOTAL;
+	double total;
 	//Calc a random F.P. value between 0 and 1 and add that to a random number between 15 and 45.
-	TOTAL = ((double) rand() / (RAND_MAX + 1.0)) + (rand() % 30 + 15);
-	return TOTAL;
+	total = ((double) rand() / (RAND_MAX + 1.0)) + (rand() % 30 + 15);
+	return total;
 }
 
 float CalcLossPercentage(void) {
 	float loss; 
+	//Calculate a percentage loss on the sale between 6 and 15%
 	loss = ((float) rand() / (float)(RAND_MAX/0.15) + 0.06);
 	return loss;
 }
