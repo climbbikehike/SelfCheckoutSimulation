@@ -106,8 +106,6 @@ double CalcTransactionTotal(void) {
 float CalcLossPercentage(void) {
 	float loss; 
 	loss = ((float) rand() / (float)(RAND_MAX/0.15) + 0.06);
-
-	printf("\nLoss: %f\n", loss);
 	return loss;
 }
 
